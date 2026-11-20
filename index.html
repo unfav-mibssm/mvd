@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Sample Card Maker</title>
+<title>Concession Card Maker</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto:wght@400;500;700&display=swap">
@@ -118,42 +118,79 @@
   @media (max-width: 560px) { .grid { grid-template-columns: minmax(0, 1fr); } }
 
   .photo-row { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
-  .photo-box { width: 96px; height: 107px; border-radius: 8px; overflow: hidden; border: 1px solid var(--line); background: var(--bg); flex: none; }
-  .photo-box img, .photo-box svg { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .photo-box { width: 96px; height: 128px; border-radius: 8px; overflow: hidden; border: 1px solid var(--line); background: var(--bg); flex: none; }
+  .photo-box img, .photo-box svg { width: 100%; height: 100%; object-fit: contain; display: block; }
+  .hint { margin: 10px 0 0; font-size: 13px; color: var(--muted); }
   .photo-btns { display: flex; gap: 10px; flex-wrap: wrap; }
   input[type="file"] { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
   .form-foot { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; margin-top: 22px; }
   .status { font-size: 14px; color: var(--ok); min-height: 1.4em; }
   .status.err { color: var(--danger); }
 
-  /* ---------- full-screen stage ---------- */
-  .stage {
+  /* ---------- card screen: white app page with a top bar ---------- */
+  .appview {
     position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 5;
-    background: var(--stage);
-    overflow: auto;
-    padding-top: 56px;
-    padding-bottom: 20px;
-    padding-left: 10px;
-    padding-right: 10px;
-    padding-top: calc(env(safe-area-inset-top, 0px) + 56px);
-    padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 20px);
-    padding-left: max(10px, env(safe-area-inset-left, 0px));
-    padding-right: max(10px, env(safe-area-inset-right, 0px));
-    display: flex; justify-content: center; align-items: flex-start;
+    background: #F1F1F1; color: #2b2e36;
+    color-scheme: light;
+    overflow-x: hidden; overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    font-family: var(--font-card);
   }
-  .back {
-    position: fixed; z-index: 10;
-    top: 12px;
-    left: 12px;
-    top: calc(env(safe-area-inset-top, 0px) + 12px);
-    left: max(12px, env(safe-area-inset-left, 0px));
-    font: inherit; font-weight: 600; font-size: 14px;
-    padding: 9px 16px; border-radius: 999px;
-    border: 1px solid rgba(255,255,255,.28);
-    background: rgba(255,255,255,.12);
-    color: #fff; cursor: pointer;
+  .appbar {
+    display: flex; align-items: center; justify-content: center;
+    height: calc(var(--cw, 360px) * 0.21);
+    box-sizing: content-box;
+    padding-top: env(safe-area-inset-top, 0px);
   }
+  .appbar-in {
+    position: relative;
+    left: calc(var(--cw, 360px) * 0.0045);
+    width: calc(var(--cw, 360px) * 1.009);
+    display: flex; align-items: center;
+  }
+  .ab-back {
+    flex: none; border: 0; padding: 0; background: transparent; color: #3a3a3a; cursor: pointer;
+    width: calc(var(--cw, 360px) * 0.12); height: calc(var(--cw, 360px) * 0.12);
+    margin-left: calc(var(--cw, 360px) * -0.0376);
+    display: grid; place-items: center; border-radius: 50%;
+  }
+  .ab-back svg { width: calc(var(--cw, 360px) * 0.0768); height: calc(var(--cw, 360px) * 0.0768); }
+  .ab-title {
+    flex: 1; min-width: 0;
+    margin-left: calc(var(--cw, 360px) * -0.006);
+    font-size: calc(var(--cw, 360px) * 0.0505); line-height: 1.2; font-weight: 400;
+    color: #3d3d3d; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .ab-dl {
+    flex: none; border: 0; cursor: pointer; background: #5A5A5A; color: #ffffff;
+    font: inherit; font-weight: 500;
+    font-size: calc(var(--cw, 360px) * 0.0345);
+    height: calc(var(--cw, 360px) * 0.0754);
+    padding: 0 calc(var(--cw, 360px) * 0.0183);
+    gap: calc(var(--cw, 360px) * 0.0114);
+    border-radius: 999px; display: inline-flex; align-items: center; white-space: nowrap;
+  }
+  .ab-dl img { width: calc(var(--cw, 360px) * 0.036); height: calc(var(--cw, 360px) * 0.036); flex: none; display: block; }
+  .appview button:focus-visible { outline: 3px solid #4f86f0; outline-offset: 2px; }
+  .cardwrap { display: flex; justify-content: center; padding: 0 0 14px; padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 14px); }
   #fit { flex: none; position: relative; }
+
+  /* ---------- photo crop dialog ---------- */
+  .crop { position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 30; background: rgba(6,9,20,.84); display: flex; align-items: center; justify-content: center; padding: 12px; overflow: auto; }
+  .crop-panel { width: 100%; max-width: 380px; background: var(--surface); color: var(--fg); border: 1px solid var(--line); border-radius: 16px; padding: 18px 20px 20px; display: grid; gap: 12px; justify-items: center; }
+  .crop-panel h3 { margin: 0; font-size: 18px; justify-self: start; }
+  .crop-hint { margin: 0; font-size: 13px; color: var(--muted); justify-self: start; }
+  .crop-frame { position: relative; overflow: hidden; background: #000; border-radius: 4px; outline: 2px solid var(--accent); touch-action: none; cursor: grab; -webkit-user-select: none; user-select: none; }
+  .crop-frame img { position: absolute; left: 0; top: 0; max-width: none; max-height: none; transform-origin: 0 0; pointer-events: none; -webkit-user-drag: none; }
+  .crop-frame::after {
+    content: ""; position: absolute; top: 0; left: 0; right: 0; bottom: 0; pointer-events: none;
+    background:
+      linear-gradient(to right, transparent 33%, rgba(255,255,255,.5) 33%, rgba(255,255,255,.5) calc(33% + 1px), transparent calc(33% + 1px), transparent 66%, rgba(255,255,255,.5) 66%, rgba(255,255,255,.5) calc(66% + 1px), transparent calc(66% + 1px)),
+      linear-gradient(to bottom, transparent 33%, rgba(255,255,255,.5) 33%, rgba(255,255,255,.5) calc(33% + 1px), transparent calc(33% + 1px), transparent 66%, rgba(255,255,255,.5) 66%, rgba(255,255,255,.5) calc(66% + 1px), transparent calc(66% + 1px));
+  }
+  .crop-zoom { display: flex; align-items: center; gap: 10px; width: 100%; font-size: 13px; font-weight: 600; color: var(--muted); }
+  .crop-zoom input { flex: 1; min-width: 0; }
+  .crop-actions { display: flex; gap: 10px; justify-content: flex-end; width: 100%; }
 
   /* ---------- the card: 825 x 1642 units, drawn on the background image ---------- */
   .card {
@@ -166,7 +203,6 @@
     font-family: var(--font-card);
     color: #0a0d12;
     transform-origin: 0 0;
-    box-shadow: 0 8px 40px rgba(0,0,0,.35);
   }
   /* children are placed in the coordinates of the original 852-wide artwork */
   .layer { position: absolute; left: -14px; top: -82px; width: 852px; height: 1846px; }
@@ -180,8 +216,8 @@
   .row .lab { flex: none; white-space: nowrap; }
   .row .val { flex: 1 1 auto; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .hr { position: absolute; left: 40px; width: 774px; height: 2px; background: #c3cad8; }
-  .photo { position: absolute; left: 601px; top: 302px; width: 213px; height: 236px; background: #dfe4ee; overflow: hidden; }
-  .photo img, .photo svg { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .photo { position: absolute; left: 619px; top: 302px; width: 195px; height: 260px; background: #ffffff; overflow: hidden; }
+  .photo img, .photo svg { width: 100%; height: 100%; object-fit: contain; display: block; }
   .addr { position: absolute; top: 1305px; font-size: 28px; font-weight: 700; line-height: 37px; max-height: 148px; overflow: hidden; white-space: pre-line; overflow-wrap: anywhere; }
   .vline { position: absolute; left: 426px; top: 1310px; width: 2px; height: 115px; background: #22262e; }
   .qr { position: absolute; left: 54px; top: 1490px; width: 156px; height: 156px; display: block; }
@@ -198,8 +234,18 @@
   .strip { position: absolute; left: 14px; top: 1662px; width: 825px; height: 62px; background: #e4202b; color: #fff; text-align: center; line-height: 62px; font-size: 24px; font-weight: 700; letter-spacing: .14em; }
   .over {
     position: absolute; top: 0; left: 0; right: 0; bottom: 0; z-index: 5; pointer-events: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='480' height='260'%3E%3Ctext x='240' y='150' text-anchor='middle' transform='rotate(-28 240 130)' font-family='Arial,Helvetica,sans-serif' font-weight='700' font-size='62' letter-spacing='7' fill='%23d0202a' fill-opacity='.17'%3ESAMPLE%3C/text%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='480' height='260'%3E%3Ctext x='240' y='150' text-anchor='middle' transform='rotate(-28 240 130)' font-family='Arial,Helvetica,sans-serif' font-weight='700' font-size='62' letter-spacing='7' fill='%23d0202a' fill-opacity='.17'%3E%3C/text%3E%3C/svg%3E");
     background-size: 480px 260px;
+  }
+  @media print {
+    @page { size: A4 portrait; margin: 0; }
+    * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    html, body { background: #F1F1F1 !important; height: 1123px; overflow: hidden; }
+    #app, .appbar, #crop { display: none !important; }
+    .appview { position: static !important; overflow: visible !important; }
+    .cardwrap { display: block; padding: 0; }
+    #fit { width: 553px !important; height: 1100px !important; overflow: hidden; margin: 11px auto 0; }
+    .card { transform: scale(.67) !important; }
   }
 </style>
 </head>
@@ -242,6 +288,7 @@
           </div>
           <input type="file" id="photo-input" accept="image/*">
         </div>
+        <p class="hint">Every photo opens a crop step first. It is cropped to 3:4 and shown on the card in full.</p>
       </div>
       <div class="form-foot">
         <div class="status" id="status" role="status" aria-live="polite"></div>
@@ -254,9 +301,13 @@
   </section>
 </div>
 
-<div id="view-card" class="stage" hidden>
-  <button type="button" class="back" id="back">&larr; Back</button>
-  <div id="fit">
+<div id="view-card" class="appview" hidden>
+  <header class="appbar"><div class="appbar-in">
+    <button type="button" class="ab-back" id="back" aria-label="Back"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 4.5L7.5 12 15 19.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+    <div class="ab-title">Concession Demo</div>
+    <button type="button" class="ab-dl" id="dl"><img alt="" src="data:image/png;base64,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"><span>Download PDF</span></button>
+  </div></header>
+  <main class="cardwrap"><div id="fit">
     <article class="card" id="card" aria-label="Sample student concession card">
       <div class="layer">
         <div class="t mid lab" style="left:40px;top:326px">Name :</div>
@@ -278,7 +329,7 @@
         <div class="row" style="top:1026px"><span class="lab">Total Distance :</span><span class="val" data-f="distance"></span></div>
         <div class="row" style="top:1087px"><span class="lab">Issued Date :</span><span class="val" data-f="issued"></span></div>
         <div class="row" style="top:1140px"><span class="lab">Expiry Date :</span><span class="val" data-f="expiry"></span></div>
-        <div class="row" style="top:1191px"><span class="lab">Card Status :</span><span class="val" style="color:#c8202c">SAMPLE ONLY</span></div>
+        <div class="row" style="top:1191px"><span class="lab">RTO Office :</span><span class="val" style="color:#000000">Kannur</span></div>
 
         <div class="hr" style="top:1229px"></div>
 
@@ -290,12 +341,25 @@
 
         <svg class="qr" viewBox="0 0 33 33" shape-rendering="crispEdges" role="img" aria-label="QR code"><rect width="33" height="33" fill="#fff"/><path fill="#000" d="M2 2h7v1h-7zM10 2h2v1h-2zM16 2h1v1h-1zM18 2h5v1h-5zM24 2h7v1h-7zM2 3h1v1h-1zM8 3h1v1h-1zM15 3h1v1h-1zM19 3h2v1h-2zM24 3h1v1h-1zM30 3h1v1h-1zM2 4h1v1h-1zM4 4h3v1h-3zM8 4h1v1h-1zM10 4h1v1h-1zM13 4h4v1h-4zM20 4h1v1h-1zM22 4h1v1h-1zM24 4h1v1h-1zM26 4h3v1h-3zM30 4h1v1h-1zM2 5h1v1h-1zM4 5h3v1h-3zM8 5h1v1h-1zM10 5h2v1h-2zM13 5h1v1h-1zM15 5h1v1h-1zM17 5h5v1h-5zM24 5h1v1h-1zM26 5h3v1h-3zM30 5h1v1h-1zM2 6h1v1h-1zM4 6h3v1h-3zM8 6h1v1h-1zM10 6h4v1h-4zM15 6h1v1h-1zM17 6h1v1h-1zM21 6h1v1h-1zM24 6h1v1h-1zM26 6h3v1h-3zM30 6h1v1h-1zM2 7h1v1h-1zM8 7h1v1h-1zM11 7h1v1h-1zM14 7h2v1h-2zM19 7h4v1h-4zM24 7h1v1h-1zM30 7h1v1h-1zM2 8h7v1h-7zM10 8h1v1h-1zM12 8h1v1h-1zM14 8h1v1h-1zM16 8h1v1h-1zM18 8h1v1h-1zM20 8h1v1h-1zM22 8h1v1h-1zM24 8h7v1h-7zM11 9h1v1h-1zM13 9h1v1h-1zM17 9h6v1h-6zM2 10h4v1h-4zM8 10h1v1h-1zM10 10h1v1h-1zM15 10h2v1h-2zM19 10h3v1h-3zM23 10h1v1h-1zM26 10h3v1h-3zM30 10h1v1h-1zM4 11h1v1h-1zM6 11h2v1h-2zM9 11h1v1h-1zM11 11h1v1h-1zM16 11h1v1h-1zM18 11h1v1h-1zM21 11h2v1h-2zM24 11h3v1h-3zM30 11h1v1h-1zM2 12h5v1h-5zM8 12h1v1h-1zM10 12h1v1h-1zM15 12h1v1h-1zM18 12h1v1h-1zM20 12h1v1h-1zM22 12h1v1h-1zM24 12h3v1h-3zM28 12h2v1h-2zM3 13h1v1h-1zM5 13h2v1h-2zM9 13h1v1h-1zM13 13h4v1h-4zM18 13h1v1h-1zM20 13h1v1h-1zM22 13h5v1h-5zM30 13h1v1h-1zM3 14h3v1h-3zM7 14h2v1h-2zM11 14h1v1h-1zM13 14h1v1h-1zM15 14h5v1h-5zM21 14h1v1h-1zM27 14h2v1h-2zM2 15h2v1h-2zM5 15h3v1h-3zM10 15h1v1h-1zM12 15h2v1h-2zM16 15h1v1h-1zM18 15h2v1h-2zM21 15h2v1h-2zM24 15h2v1h-2zM28 15h3v1h-3zM2 16h1v1h-1zM4 16h1v1h-1zM6 16h3v1h-3zM11 16h2v1h-2zM14 16h1v1h-1zM16 16h1v1h-1zM18 16h1v1h-1zM21 16h3v1h-3zM25 16h2v1h-2zM28 16h3v1h-3zM2 17h2v1h-2zM5 17h2v1h-2zM10 17h1v1h-1zM14 17h1v1h-1zM16 17h3v1h-3zM22 17h1v1h-1zM24 17h3v1h-3zM29 17h1v1h-1zM2 18h1v1h-1zM4 18h3v1h-3zM8 18h1v1h-1zM12 18h2v1h-2zM20 18h1v1h-1zM22 18h2v1h-2zM26 18h2v1h-2zM29 18h1v1h-1zM3 19h2v1h-2zM6 19h1v1h-1zM9 19h3v1h-3zM14 19h1v1h-1zM16 19h2v1h-2zM20 19h1v1h-1zM22 19h2v1h-2zM25 19h1v1h-1zM27 19h3v1h-3zM2 20h1v1h-1zM5 20h1v1h-1zM8 20h1v1h-1zM10 20h5v1h-5zM17 20h2v1h-2zM25 20h1v1h-1zM28 20h1v1h-1zM4 21h4v1h-4zM14 21h1v1h-1zM16 21h1v1h-1zM18 21h2v1h-2zM21 21h3v1h-3zM28 21h1v1h-1zM2 22h2v1h-2zM5 22h1v1h-1zM8 22h7v1h-7zM16 22h2v1h-2zM19 22h10v1h-10zM10 23h3v1h-3zM14 23h1v1h-1zM20 23h1v1h-1zM22 23h1v1h-1zM26 23h5v1h-5zM2 24h7v1h-7zM11 24h6v1h-6zM21 24h2v1h-2zM24 24h1v1h-1zM26 24h2v1h-2zM29 24h1v1h-1zM2 25h1v1h-1zM8 25h1v1h-1zM11 25h1v1h-1zM15 25h3v1h-3zM20 25h1v1h-1zM22 25h1v1h-1zM26 25h2v1h-2zM29 25h1v1h-1zM2 26h1v1h-1zM4 26h3v1h-3zM8 26h1v1h-1zM12 26h1v1h-1zM14 26h1v1h-1zM16 26h4v1h-4zM22 26h5v1h-5zM28 26h3v1h-3zM2 27h1v1h-1zM4 27h3v1h-3zM8 27h1v1h-1zM10 27h1v1h-1zM13 27h2v1h-2zM17 27h2v1h-2zM21 27h3v1h-3zM26 27h2v1h-2zM30 27h1v1h-1zM2 28h1v1h-1zM4 28h3v1h-3zM8 28h1v1h-1zM10 28h1v1h-1zM12 28h2v1h-2zM15 28h1v1h-1zM23 28h1v1h-1zM25 28h1v1h-1zM28 28h1v1h-1zM30 28h1v1h-1zM2 29h1v1h-1zM8 29h1v1h-1zM10 29h1v1h-1zM13 29h1v1h-1zM16 29h1v1h-1zM18 29h1v1h-1zM20 29h3v1h-3zM25 29h1v1h-1zM27 29h1v1h-1zM29 29h1v1h-1zM2 30h7v1h-7zM10 30h1v1h-1zM16 30h3v1h-3zM21 30h2v1h-2zM27 30h1v1h-1zM29 30h1v1h-1z"/></svg>
         <div class="sig" data-f="sigText"></div>
-        <div class="note">Demo card just for fun. Not valid for travel or ID.</div>
+        <div class="note"></div>
         <div class="badge"><svg viewBox="0 0 40 40" aria-hidden="true"><path d="M20.00 1.00 L20.74 1.11 L21.46 1.42 L22.14 1.91 L22.77 2.53 L23.34 3.23 L23.85 3.94 L24.34 4.62 L24.81 5.20 L25.29 5.65 L25.82 5.96 L26.40 6.11 L27.07 6.13 L27.81 6.05 L28.63 5.92 L29.50 5.78 L30.40 5.69 L31.28 5.69 L32.10 5.83 L32.83 6.12 L33.44 6.56 L33.88 7.17 L34.17 7.90 L34.31 8.72 L34.31 9.60 L34.22 10.50 L34.08 11.37 L33.95 12.19 L33.87 12.93 L33.89 13.60 L34.04 14.18 L34.35 14.71 L34.80 15.19 L35.38 15.66 L36.06 16.15 L36.77 16.66 L37.47 17.23 L38.09 17.86 L38.58 18.54 L38.89 19.26 L39.00 20.00 L38.89 20.74 L38.58 21.46 L38.09 22.14 L37.47 22.77 L36.77 23.34 L36.06 23.85 L35.38 24.34 L34.80 24.81 L34.35 25.29 L34.04 25.82 L33.89 26.40 L33.87 27.07 L33.95 27.81 L34.08 28.63 L34.22 29.50 L34.31 30.40 L34.31 31.28 L34.17 32.10 L33.88 32.83 L33.44 33.44 L32.83 33.88 L32.10 34.17 L31.28 34.31 L30.40 34.31 L29.50 34.22 L28.63 34.08 L27.81 33.95 L27.07 33.87 L26.40 33.89 L25.82 34.04 L25.29 34.35 L24.81 34.80 L24.34 35.38 L23.85 36.06 L23.34 36.77 L22.77 37.47 L22.14 38.09 L21.46 38.58 L20.74 38.89 L20.00 39.00 L19.26 38.89 L18.54 38.58 L17.86 38.09 L17.23 37.47 L16.66 36.77 L16.15 36.06 L15.66 35.38 L15.19 34.80 L14.71 34.35 L14.18 34.04 L13.60 33.89 L12.93 33.87 L12.19 33.95 L11.37 34.08 L10.50 34.22 L9.60 34.31 L8.72 34.31 L7.90 34.17 L7.17 33.88 L6.56 33.44 L6.12 32.83 L5.83 32.10 L5.69 31.28 L5.69 30.40 L5.78 29.50 L5.92 28.63 L6.05 27.81 L6.13 27.07 L6.11 26.40 L5.96 25.82 L5.65 25.29 L5.20 24.81 L4.62 24.34 L3.94 23.85 L3.23 23.34 L2.53 22.77 L1.91 22.14 L1.42 21.46 L1.11 20.74 L1.00 20.00 L1.11 19.26 L1.42 18.54 L1.91 17.86 L2.53 17.23 L3.23 16.66 L3.94 16.15 L4.62 15.66 L5.20 15.19 L5.65 14.71 L5.96 14.18 L6.11 13.60 L6.13 12.93 L6.05 12.19 L5.92 11.37 L5.78 10.50 L5.69 9.60 L5.69 8.72 L5.83 7.90 L6.12 7.17 L6.56 6.56 L7.17 6.12 L7.90 5.83 L8.72 5.69 L9.60 5.69 L10.50 5.78 L11.37 5.92 L12.19 6.05 L12.93 6.13 L13.60 6.11 L14.18 5.96 L14.71 5.65 L15.19 5.20 L15.66 4.62 L16.15 3.94 L16.66 3.23 L17.23 2.53 L17.86 1.91 L18.54 1.42 L19.26 1.11Z" fill="#2f9a43"/><path d="M12 20.8l5.6 5.6L28.4 14.6" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg><span>SAMPLE / DEMO FUN</span></div>
         <div class="strip">SAMPLE &mdash; NOT A VALID DOCUMENT</div>
       </div>
       <div class="over" aria-hidden="true"></div>
     </article>
+  </div></main>
+</div>
+
+<div id="crop" class="crop" hidden role="dialog" aria-modal="true" aria-labelledby="crop-title">
+  <div class="crop-panel" id="crop-panel">
+    <h3 id="crop-title">Crop photo to 3:4</h3>
+    <p class="crop-hint">Drag to move. Pinch or use the slider to zoom. The card shows exactly this frame.</p>
+    <div class="crop-frame" id="crop-frame"><img id="crop-img" alt="Photo being cropped"></div>
+    <label class="crop-zoom" for="crop-zoom">Zoom <input type="range" id="crop-zoom" min="1" max="4" step="0.01" value="1"></label>
+    <div class="crop-actions">
+      <button type="button" class="btn" id="crop-cancel">Cancel</button>
+      <button type="button" class="btn primary" id="crop-ok">Use photo</button>
+    </div>
   </div>
 </div>
 
@@ -335,7 +399,7 @@
     expiry: '2027-08-05',
     commAddress: '12/649, Green Valley\nNear Town Hall\nKozhikode - 673001',
     instAddress: 'Riverdale Arts and Science College, Civil Lines\nKozhikode - 673010',
-    sigText: 'Signature of Head of the\nRickroll Department',
+    sigText: 'Signature of Head of the\nInstitution,
     photo: ''
   };
   var byKey = {};
@@ -356,7 +420,7 @@
   } catch (e) {}
 
   var $ = function (id) { return document.getElementById(id); };
-  var PLACEHOLDER = '<svg viewBox="0 0 100 110" aria-hidden="true"><rect width="100" height="110" fill="#dfe4ee"/><circle cx="50" cy="40" r="18" fill="#aab3c5"/><path d="M14 110C14 78 34 66 50 66C66 66 86 78 86 110Z" fill="#aab3c5"/></svg>';
+  var PLACEHOLDER = '<svg viewBox="0 0 75 100" aria-hidden="true"><rect width="75" height="100" fill="#dfe4ee"/><circle cx="37.5" cy="36" r="14" fill="#aab3c5"/><path d="M8 100C8 76 24 66 37.5 66C51 66 67 76 67 100Z" fill="#aab3c5"/></svg>';
 
   function fmtDate(v) {
     var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(v || '');
@@ -455,33 +519,147 @@
     FIELDS.forEach(function (f) { $('f-' + f.key).value = state[f.key]; });
   }
 
-  /* ---- photo ---- */
+  /* ---- photo: always cropped to 3:4 before use ---- */
+  var cr = { url: '', nw: 0, nh: 0, fw: 0, fh: 0, min: 1, s: 1, ox: 0, oy: 0, pts: {}, pinch: 0 };
+  var crImg = $('crop-img'), crFrame = $('crop-frame'), crZoom = $('crop-zoom');
+  function crApply() {
+    crImg.style.transform = 'translate(' + cr.ox + 'px,' + cr.oy + 'px) scale(' + cr.s + ')';
+  }
+  function crClamp() {
+    cr.ox = Math.min(0, Math.max(cr.fw - cr.nw * cr.s, cr.ox));
+    cr.oy = Math.min(0, Math.max(cr.fh - cr.nh * cr.s, cr.oy));
+  }
+  function crZoomTo(ns, cx, cy) {
+    ns = Math.max(cr.min, Math.min(cr.min * 4, ns));
+    var k = ns / cr.s;
+    cr.ox = cx - (cx - cr.ox) * k;
+    cr.oy = cy - (cy - cr.oy) * k;
+    cr.s = ns;
+    crClamp();
+    crApply();
+    crZoom.value = String(cr.s / cr.min);
+  }
+  function crSize(reset) {
+    var panelW = $('crop-panel').clientWidth - 40;
+    var w = Math.max(150, Math.min(300, panelW, Math.floor((window.innerHeight - 300) * 0.75)));
+    w = Math.max(150, Math.floor(w / 3) * 3);
+    cr.fw = w;
+    cr.fh = w / 3 * 4;
+    crFrame.style.width = cr.fw + 'px';
+    crFrame.style.height = cr.fh + 'px';
+    cr.min = Math.max(cr.fw / cr.nw, cr.fh / cr.nh);
+    if (reset) {
+      cr.s = cr.min;
+      cr.ox = (cr.fw - cr.nw * cr.s) / 2;
+      cr.oy = (cr.fh - cr.nh * cr.s) / 2;
+      crZoom.value = '1';
+    } else {
+      cr.s = Math.max(cr.min, Math.min(cr.min * 4, cr.s));
+    }
+    crClamp();
+    crApply();
+  }
+  function crOpen(file) {
+    crClose(true);
+    cr.url = URL.createObjectURL(file);
+    crImg.onload = function () {
+      cr.nw = crImg.naturalWidth;
+      cr.nh = crImg.naturalHeight;
+      if (!cr.nw || !cr.nh) { crClose(true); setStatus('That file could not be read as an image. Try a JPG or PNG.', true); return; }
+      crImg.style.width = cr.nw + 'px';
+      crImg.style.height = cr.nh + 'px';
+      $('crop').hidden = false;
+      crSize(true);
+      $('crop-ok').focus();
+    };
+    crImg.onerror = function () {
+      crClose(true);
+      setStatus('That file could not be read as an image. Try a JPG or PNG.', true);
+    };
+    crImg.src = cr.url;
+  }
+  function crClose(quiet) {
+    $('crop').hidden = true;
+    cr.pts = {};
+    cr.pinch = 0;
+    if (cr.url) { try { URL.revokeObjectURL(cr.url); } catch (e) {} cr.url = ''; }
+    crImg.onload = null;
+    crImg.onerror = null;
+    if (!quiet) { try { $('photo-pick').focus(); } catch (e) {} }
+  }
+  function crDone() {
+    var OW = 600, OH = 800;
+    var c = document.createElement('canvas');
+    c.width = OW; c.height = OH;
+    var ctx = c.getContext('2d');
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, OW, OH);
+    try { ctx.imageSmoothingQuality = 'high'; } catch (e) {}
+    var sw = cr.fw / cr.s, sh = cr.fh / cr.s;
+    var sx = Math.max(0, Math.min(cr.nw - sw, -cr.ox / cr.s));
+    var sy = Math.max(0, Math.min(cr.nh - sh, -cr.oy / cr.s));
+    ctx.drawImage(crImg, sx, sy, sw, sh, 0, 0, OW, OH);
+    state.photo = c.toDataURL('image/jpeg', 0.9);
+    crClose();
+    renderCard();
+    save();
+  }
+  function crDist() {
+    var ids = Object.keys(cr.pts);
+    if (ids.length < 2) return 0;
+    var a = cr.pts[ids[0]], b = cr.pts[ids[1]];
+    return Math.sqrt((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y));
+  }
+  crFrame.addEventListener('pointerdown', function (e) {
+    try { crFrame.setPointerCapture(e.pointerId); } catch (err) {}
+    cr.pts[e.pointerId] = { x: e.clientX, y: e.clientY };
+    cr.pinch = crDist();
+    e.preventDefault();
+  });
+  crFrame.addEventListener('pointermove', function (e) {
+    var prev = cr.pts[e.pointerId];
+    if (!prev) return;
+    var cur = { x: e.clientX, y: e.clientY };
+    cr.pts[e.pointerId] = cur;
+    var ids = Object.keys(cr.pts);
+    if (ids.length === 1) {
+      cr.ox += cur.x - prev.x;
+      cr.oy += cur.y - prev.y;
+      crClamp();
+      crApply();
+    } else {
+      var d = crDist();
+      var r = crFrame.getBoundingClientRect();
+      var a = cr.pts[ids[0]], b = cr.pts[ids[1]];
+      if (cr.pinch) crZoomTo(cr.s * d / cr.pinch, (a.x + b.x) / 2 - r.left, (a.y + b.y) / 2 - r.top);
+      cr.pinch = d;
+    }
+  });
+  function crPointerEnd(e) {
+    delete cr.pts[e.pointerId];
+    cr.pinch = crDist();
+  }
+  crFrame.addEventListener('pointerup', crPointerEnd);
+  crFrame.addEventListener('pointercancel', crPointerEnd);
+  crFrame.addEventListener('wheel', function (e) {
+    e.preventDefault();
+    var r = crFrame.getBoundingClientRect();
+    crZoomTo(cr.s * (e.deltaY < 0 ? 1.08 : 1 / 1.08), e.clientX - r.left, e.clientY - r.top);
+  }, { passive: false });
+  crZoom.addEventListener('input', function () {
+    crZoomTo(cr.min * parseFloat(crZoom.value), cr.fw / 2, cr.fh / 2);
+  });
+  $('crop-ok').addEventListener('click', crDone);
+  $('crop-cancel').addEventListener('click', function () { crClose(); });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && !$('crop').hidden) crClose();
+  });
+  window.addEventListener('resize', function () { if (!$('crop').hidden) crSize(false); });
+
   $('photo-input').addEventListener('change', function (e) {
     var file = e.target.files && e.target.files[0];
-    if (!file) return;
-    var reader = new FileReader();
-    reader.onload = function () {
-      var img = new Image();
-      img.onload = function () {
-        var max = 640;
-        var s = Math.min(1, max / Math.max(img.width, img.height));
-        var c = document.createElement('canvas');
-        c.width = Math.max(1, Math.round(img.width * s));
-        c.height = Math.max(1, Math.round(img.height * s));
-        var ctx = c.getContext('2d');
-        ctx.fillStyle = '#ffffff';
-        ctx.fillRect(0, 0, c.width, c.height);
-        ctx.drawImage(img, 0, 0, c.width, c.height);
-        state.photo = c.toDataURL('image/jpeg', 0.88);
-        renderCard();
-        save();
-      };
-      img.onerror = function () { setStatus('That file could not be read as an image. Try a JPG or PNG.', true); };
-      img.src = reader.result;
-    };
-    reader.onerror = function () { setStatus('That file could not be read. Try another photo.', true); };
-    reader.readAsDataURL(file);
     e.target.value = '';
+    if (file) crOpen(file);
   });
   $('photo-pick').addEventListener('keydown', function (e) {
     if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); $('photo-input').click(); }
@@ -490,6 +668,16 @@
     state.photo = '';
     renderCard();
     save();
+  });
+
+  /* ---- Download PDF: opens Save as PDF with the card on one A4 page ---- */
+  $('dl').addEventListener('click', function () {
+    var old = document.title;
+    document.title = 'Concession Demo - ' + (state.name.trim() || 'card');
+    var restore = function () { document.title = old; window.removeEventListener('afterprint', restore); };
+    window.addEventListener('afterprint', restore);
+    try { window.print(); } catch (e) { restore(); }
+    setTimeout(function () { document.title = old; }, 60000);
   });
 
   /* ---- reset (two-step, no confirm dialog) ---- */
@@ -561,24 +749,20 @@
     $('view-details').hidden = view !== 'details';
     $('tab-home').setAttribute('aria-selected', view === 'home' ? 'true' : 'false');
     $('tab-details').setAttribute('aria-selected', view === 'details' ? 'true' : 'false');
-    if (view === 'card') { fit(); window.scrollTo(0, 0); }
+    if (view === 'card') { fit(); $('view-card').scrollTop = 0; window.scrollTo(0, 0); }
     else leaveFullscreen();
   }
 
   function fit() {
-    var stage = $('view-card');
-    if (stage.hidden) return;
-    var card = $('card');
-    var W = 825, H = 1642;
-    var cs = getComputedStyle(stage);
-    var availW = stage.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
-    var availH = stage.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom);
-    var s = availW / W;
-    if (availW > availH) s = Math.min(s, availH / H);
-    s = Math.max(0.2, Math.min(s, 1.5));
-    $('fit').style.width = (W * s) + 'px';
-    $('fit').style.height = (H * s) + 'px';
-    card.style.transform = 'scale(' + s + ')';
+    var wrap = $('view-card');
+    if (wrap.hidden) return;
+    var vw = wrap.clientWidth;
+    var w = Math.max(200, Math.min(Math.round(vw * 0.9), 460));
+    var s = w / 825;
+    wrap.style.setProperty('--cw', w + 'px');
+    $('fit').style.width = w + 'px';
+    $('fit').style.height = Math.round(1642 * s) + 'px';
+    $('card').style.transform = 'scale(' + s + ')';
   }
 
   window.addEventListener('hashchange', route);
