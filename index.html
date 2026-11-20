@@ -764,7 +764,7 @@
     var ch = Math.round(1642 * s);
     $('fit').style.height = ch + 'px';
     $('card').style.transform = 'scale(' + s + ')';
-    var SCROLL_EXTRA = 28;
+    var SCROLL_EXTRA = 0;
     var hb = wrap.querySelector('.appbar').offsetHeight;
     var pad = Math.max(14, wrap.clientHeight - hb - ch) + SCROLL_EXTRA;
     wrap.querySelector('.cardwrap').style.paddingBottom = pad + 'px';
